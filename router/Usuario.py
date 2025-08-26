@@ -3,9 +3,7 @@ from  pydantic import BaseModel, Field , EmailStr
 from typing import Annotated
 userRouter = APIRouter(prefix="/user", tags=['user'])
 
-datos=[
-    {"personaID":"password"}
-    ]
+datos=[]
 
 class Login(BaseModel):
     email: str
@@ -16,15 +14,25 @@ class usuario(BaseModel):
 
 @userRouter.get('/me', response_model=usuario)
 async def user_perfil(userCOOKIE: str = Cookie(default=None)):
-    return {"user":"perfil"}
+    """ obtener el perfil del usuario """
+    for data in datos.dict:
+        if data[Login.email] == userCOOKIE:
+            return data
+    return {"mensaje":"perfil no encontrado"}
 
 @userRouter.post('/login',status_code=status.HTTP_201_CREATED)
 async def user_login(usuarioLogin:Login, response:Response):
+    """ crear la cookie del login del usuario por contraseña y correo email. """
     for data in datos.dict:
-        if data['personaID'] == usuarioLogin.password:
+        if data[usuarioLogin.email] == usuarioLogin.password:
             response.set_cookie(key=usuarioLogin.email,value=usuarioLogin.password)
             return {"exito":"login exitoso"}
 
-@userRouter.post('/register')
+@userRouter.post('/register', status_code=status.HTTP_201_CREATED)
 async def user_register(usuario:Annotated[str,usuario],response:Response):
-    pass
+    """
+        crear el registro del usuario y creacion del cookie
+    """
+    datos.append(usuario)
+    response.set_cookie(key=usuario.email,value=usuario.password)
+    return {"ok":True , "mensaje":"usuario registrado exitosamente!."}
