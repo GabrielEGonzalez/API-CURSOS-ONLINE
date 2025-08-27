@@ -81,7 +81,3 @@ Un backend tipo API para gestionar una plataforma educativa como Udemy o Platzi,
 * Documentación OpenAPI con ejemplos
 
 ---
-
-Si prefieres versión **E-commerce** o **Empresarial (CRM o RRHH)**, también te la armo.
-
-¿Quieres comenzar con este educativo o te gustaría que lo personalice más?
