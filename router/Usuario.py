@@ -1,6 +1,6 @@
 from fastapi import APIRouter , Cookie , Response , status
 from  pydantic import BaseModel, Field , EmailStr
-from typing import Annotated
+from typing import Annotated , Union
 userRouter = APIRouter(prefix="/user", tags=['user'])
 
 datos=[]
@@ -15,13 +15,14 @@ class usuario(BaseModel):
     email:str
     password:str
 
-@userRouter.get('/me', response_model=usuario)
+@userRouter.get("/me", response_model=Union[usuario, dict])
 async def user_perfil(userCOOKIE: str = Cookie(default=None)):
-    """ obtener el perfil del usuario """
-    for data in datos:
-        if data.password == userCOOKIE:
-            return {"info":"informacion encontrada","data":data}
-    return {"mensaje":"perfil no encontrado"}
+    if userCOOKIE:
+        for data in datos:
+            if data.password == userCOOKIE:
+                return data
+        return {"mensaje": "perfil no encontrado"}
+    return {"mensaje": "cookie no encontrada!."}
 
 @userRouter.post('/login',status_code=status.HTTP_201_CREATED)
 async def user_login(usuarioLogin:Login, response:Response):
@@ -39,5 +40,5 @@ async def user_register(usuario:usuario,response:Response):
         crear el registro del usuario y creacion del cookie
     """
     datos.append(usuario)
-    response.set_cookie(key=usuario.email,value=usuario.password)
+    response.set_cookie(key="userCOOKIE",value=usuario.password)
     return {"ok":True , "mensaje":"usuario registrado exitosamente!."}
