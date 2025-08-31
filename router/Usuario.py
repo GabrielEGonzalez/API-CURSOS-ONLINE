@@ -1,5 +1,6 @@
 from fastapi import APIRouter , Cookie , Response , status
 from  pydantic import BaseModel, Field , EmailStr
+from cryptography.fernet import Fernet
 from typing import Annotated , Union
 userRouter = APIRouter(prefix="/user", tags=['user'])
 
@@ -39,6 +40,11 @@ async def user_register(usuario:usuario,response:Response):
     """
         crear el registro del usuario y creacion del cookie
     """
-    datos.append(usuario)
-    response.set_cookie(key="userCOOKIE",value=usuario.password)
-    return {"ok":True , "mensaje":"usuario registrado exitosamente!."}
+    secret_key = Fernet.generate_key()
+    cipher = Fernet(secret_key)
+    data = f"usuario={usuario.id}&password={usuario.password}"
+    token = cypher.encrypt(data.encode())
+    
+    #datos.append(usuario)
+    #response.set_cookie(key="userCOOKIE",value=usuario.password)
+    #return {"ok":True , "mensaje":"usuario registrado exitosamente!."}
