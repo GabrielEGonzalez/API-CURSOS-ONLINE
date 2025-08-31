@@ -42,7 +42,7 @@ async def user_register(usuario:usuario,response:Response):
     """
     secret_key = Fernet.generate_key()
     cipher = Fernet(secret_key)
-    data = f"usuario={usuario.id}&password={usuario.password}"
+    data = f"usuario={usuario.email}&password={usuario.password}"
     token = cypher.encrypt(data.encode())
     
     #datos.append(usuario)
