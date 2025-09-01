@@ -5,6 +5,7 @@ from typing import Annotated , Union
 userRouter = APIRouter(prefix="/user", tags=['user'])
 
 datos=[]
+secret_key = Fernet.generate_key()
 
 class Login(BaseModel):
     email: str
@@ -28,10 +29,13 @@ async def user_perfil(userCOOKIE: str = Cookie(default=None)):
 @userRouter.post('/login',status_code=status.HTTP_201_CREATED)
 async def user_login(usuarioLogin:Login, response:Response):
     """ crear la cookie del login del usuario por contraseña y correo email. """
+    cipher = Fernet(secret_key)
     for data in datos:
         if data.email == usuarioLogin.email:
             if data.password == usuarioLogin.password:
-                response.set_cookie(key=usuarioLogin.email,value=usuarioLogin.password)
+                token_str = f"usuario={usuario.email}&password={usuario.password}"
+                token = cypher.encrypt(token_str.encode())
+                response.set_cookie(key=userCOOKIE,value=token)
                 return {"exito":"login exitoso"}
             return response.JSONResponse(content={"info":"usuario no encontrado"},status_code=404)
 
@@ -40,11 +44,10 @@ async def user_register(usuario:usuario,response:Response):
     """
         crear el registro del usuario y creacion del cookie
     """
-    secret_key = Fernet.generate_key()
     cipher = Fernet(secret_key)
     data = f"usuario={usuario.email}&password={usuario.password}"
     token = cypher.encrypt(data.encode())
     
-    #datos.append(usuario)
-    #response.set_cookie(key="userCOOKIE",value=usuario.password)
-    #return {"ok":True , "mensaje":"usuario registrado exitosamente!."}
+    datos.append(usuario)
+    response.set_cookie(key="userCOOKIE",value=token)#usuario.password
+    return {"ok":True , "mensaje":"usuario registrado exitosamente!."}
