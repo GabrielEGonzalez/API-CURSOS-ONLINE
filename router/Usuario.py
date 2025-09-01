@@ -20,8 +20,7 @@ class usuario(BaseModel):
 @userRouter.get("/me", response_model=Union[usuario, dict])
 async def user_perfil(userCOOKIE: str = Cookie(default=None)):
     if userCOOKIE:
-        clave = userCOOKIE.split("&")
-        claves = dict(item.split("=") for item in clave)
+        claves = dict(item.split("=") for item in userCOOKIE.split("&"))
         for data in datos:
             if data.password == claves["password"]:
                 return data
