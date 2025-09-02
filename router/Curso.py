@@ -26,4 +26,6 @@ async def crear_curso(userCookie:Cookie(),curso:Curso):
     if perfildata["rol"] == "Instructor":
       curso.append(curso)
       Response.status_code=201
+      return {"mensaje":"curso creado exitosamente!" ,"ok":True}
     Response.status_code=401
+    return {"mensaje":"curso no creado","ok":False,"rol": f"no {perfildata['rol']} autorizado"}
