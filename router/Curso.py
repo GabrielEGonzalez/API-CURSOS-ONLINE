@@ -29,3 +29,15 @@ async def crear_curso(userCookie:Cookie(),curso:Curso):
       return {"mensaje":"curso creado exitosamente!" ,"ok":True}
     Response.status_code=401
     return {"mensaje":"curso no creado","ok":False,"rol": f"no {perfildata['rol']} autorizado"}
+    
+@cursoRouter.get("")
+async def lista_curso():
+    pass 
+
+@cursoRouter.get("")
+async def detalle_curso():
+    pass
+
+@cursoRouter.put("")
+async def editar_curso():
+    pass
